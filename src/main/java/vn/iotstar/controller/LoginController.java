@@ -28,6 +28,14 @@ public class LoginController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/waiting");
             return;
         }
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            Object successMsg = session.getAttribute(Constant.SESSION_SUCCESS);
+            if (successMsg != null) {
+                req.setAttribute("success", successMsg);
+                session.removeAttribute(Constant.SESSION_SUCCESS);
+            }
+        }
         req.getRequestDispatcher(Constant.Path.LOGIN).forward(req, resp);
     }
 
@@ -51,6 +59,14 @@ public class LoginController extends HttpServlet {
 
         User user = service.login(username.trim(), password);
         if (user != null) {
+            if (user.getStatus() != 1) {
+                HttpSession session = req.getSession(true);
+                session.setAttribute(Constant.SESSION_PENDING_EMAIL, user.getEmail());
+                req.setAttribute("alert", "Tài khoản chưa được kích hoạt. Vui lòng xác thực mã OTP qua email.");
+                req.setAttribute("needVerify", true);
+                req.getRequestDispatcher(Constant.Path.LOGIN).forward(req, resp);
+                return;
+            }
             HttpSession session = req.getSession(true);
             session.setAttribute(Constant.SESSION_ACCOUNT, user);
 

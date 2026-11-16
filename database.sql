@@ -18,8 +18,29 @@ BEGIN
         avatar NVARCHAR(255) NULL,
         roleid INT NOT NULL DEFAULT 5,
         phone NVARCHAR(255) NULL,
-        createddate DATE NULL
+        createddate DATE NULL,
+        status INT NOT NULL DEFAULT 1,
+        otp NVARCHAR(10) NULL,
+        otp_expiry DATETIME2 NULL
     );
+END
+GO
+
+IF COL_LENGTH('dbo.[User]', 'status') IS NULL
+BEGIN
+    ALTER TABLE dbo.[User] ADD status INT NOT NULL DEFAULT 1;
+END
+GO
+
+IF COL_LENGTH('dbo.[User]', 'otp') IS NULL
+BEGIN
+    ALTER TABLE dbo.[User] ADD otp NVARCHAR(10) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.[User]', 'otp_expiry') IS NULL
+BEGIN
+    ALTER TABLE dbo.[User] ADD otp_expiry DATETIME2 NULL;
 END
 GO
 

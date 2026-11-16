@@ -1,12 +1,14 @@
 package vn.iotstar.controller;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import vn.iotstar.service.UserService;
 import vn.iotstar.service.impl.UserServiceImpl;
 import vn.iotstar.util.AuthHelper;
@@ -15,6 +17,7 @@ import vn.iotstar.util.Constant;
 @WebServlet(urlPatterns = "/register")
 public class RegisterController extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     private final UserService service = new UserServiceImpl();
 
@@ -48,6 +51,11 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            forwardWithAlert(req, resp, "Định dạng email không hợp lệ!");
+            return;
+        }
+
         if (!password.equals(repassword)) {
             forwardWithAlert(req, resp, "Mật khẩu nhập lại không khớp!");
             return;
@@ -70,9 +78,13 @@ public class RegisterController extends HttpServlet {
 
         boolean isSuccess = service.register(username, password, email, fullname, phone.isEmpty() ? null : phone);
         if (isSuccess) {
-            resp.sendRedirect(req.getContextPath() + "/login");
+            HttpSession session = req.getSession(true);
+            session.setAttribute(Constant.SESSION_PENDING_EMAIL, email);
+            session.setAttribute(Constant.SESSION_SUCCESS,
+                    "Đăng ký thành công! Mã OTP đã được gửi tới email của bạn.");
+            resp.sendRedirect(req.getContextPath() + "/verify-otp");
         } else {
-            forwardWithAlert(req, resp, "System error!");
+            forwardWithAlert(req, resp, "Không thể tạo tài khoản hoặc gửi email OTP. Vui lòng thử lại!");
         }
     }
 

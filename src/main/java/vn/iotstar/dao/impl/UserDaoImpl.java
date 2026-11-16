@@ -26,6 +26,22 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User findByEmail(String email) {
+        if (email == null) {
+            return null;
+        }
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            TypedQuery<User> query = em.createQuery(
+                    "SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getResultStream().findFirst().orElse(null);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public void insert(User user) {
         EntityManager em = JPAConfig.getEntityManager();
         EntityTransaction trans = em.getTransaction();
@@ -38,6 +54,45 @@ public class UserDaoImpl implements UserDao {
                 trans.rollback();
             }
             throw new IllegalStateException("Insert user failed", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void update(User user) {
+        EntityManager em = JPAConfig.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            em.merge(user);
+            trans.commit();
+        } catch (RuntimeException e) {
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+            throw new IllegalStateException("Update user failed", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+        EntityManager em = JPAConfig.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            User user = em.find(User.class, id);
+            if (user != null) {
+                em.remove(user);
+            }
+            trans.commit();
+        } catch (RuntimeException e) {
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+            throw new IllegalStateException("Delete user failed", e);
         } finally {
             em.close();
         }

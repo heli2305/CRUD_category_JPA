@@ -25,7 +25,7 @@ public final class AuthHelper {
             for (Cookie cookie : cookies) {
                 if (Constant.COOKIE_REMEMBER.equals(cookie.getName())) {
                     User user = service.get(cookie.getValue());
-                    if (user != null) {
+                    if (user != null && user.getStatus() == 1) {
                         req.getSession(true).setAttribute(Constant.SESSION_ACCOUNT, user);
                         return true;
                     }
