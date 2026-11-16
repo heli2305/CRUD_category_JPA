@@ -111,11 +111,9 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus() == 1) {
             return OtpStatus.ALREADY_ACTIVE;
         }
-        if (otp == null || otp.isBlank() || user.getOtp() == null || !user.getOtp().equals(otp.trim())) {
-            return OtpStatus.INVALID_OTP;
-        }
-        if (user.getOtpExpiry() == null || LocalDateTime.now().isAfter(user.getOtpExpiry())) {
-            return OtpStatus.EXPIRED_OTP;
+        OtpStatus otpValidation = validateOtp(user, otp);
+        if (otpValidation != null) {
+            return otpValidation;
         }
 
         user.setStatus(1);
@@ -149,6 +147,96 @@ public class UserServiceImpl implements UserService {
         } catch (RuntimeException e) {
             return OtpStatus.SEND_FAILED;
         }
+    }
+
+    @Override
+    public OtpStatus sendForgotPasswordOtp(String email) {
+        if (email == null || email.isBlank()) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        User user = userDao.findByEmail(email.trim());
+        if (user == null) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        if (user.getStatus() != 1) {
+            return OtpStatus.INACTIVE_ACCOUNT;
+        }
+
+        String previousOtp = user.getOtp();
+        LocalDateTime previousExpiry = user.getOtpExpiry();
+        String newOtp = OtpUtil.generateOtp();
+        user.setOtp(newOtp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(OtpUtil.OTP_EXPIRY_MINUTES));
+        userDao.update(user);
+
+        try {
+            emailService.sendResetPasswordOtpEmail(user.getEmail(), user.getFullName(), newOtp);
+            return OtpStatus.SUCCESS;
+        } catch (RuntimeException e) {
+            user.setOtp(previousOtp);
+            user.setOtpExpiry(previousExpiry);
+            try {
+                userDao.update(user);
+            } catch (RuntimeException ignored) {
+            }
+            return OtpStatus.SEND_FAILED;
+        }
+    }
+
+    @Override
+    public OtpStatus verifyForgotPasswordOtp(String email, String otp) {
+        if (email == null || email.isBlank()) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        User user = userDao.findByEmail(email.trim());
+        if (user == null) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        if (user.getStatus() != 1) {
+            return OtpStatus.INACTIVE_ACCOUNT;
+        }
+        OtpStatus otpValidation = validateOtp(user, otp);
+        if (otpValidation != null) {
+            return otpValidation;
+        }
+
+        user.setOtp(null);
+        user.setOtpExpiry(null);
+        userDao.update(user);
+        return OtpStatus.SUCCESS;
+    }
+
+    @Override
+    public OtpStatus resetPassword(String email, String newPassword) {
+        if (newPassword == null || newPassword.isEmpty()) {
+            throw new IllegalArgumentException("Mật khẩu mới không được để trống");
+        }
+        if (email == null || email.isBlank()) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        User user = userDao.findByEmail(email.trim());
+        if (user == null) {
+            return OtpStatus.USER_NOT_FOUND;
+        }
+        if (user.getStatus() != 1) {
+            return OtpStatus.INACTIVE_ACCOUNT;
+        }
+
+        user.setPassWord(PasswordUtil.hashPassword(newPassword));
+        user.setOtp(null);
+        user.setOtpExpiry(null);
+        userDao.update(user);
+        return OtpStatus.SUCCESS;
+    }
+
+    private OtpStatus validateOtp(User user, String otp) {
+        if (otp == null || otp.isBlank() || user.getOtp() == null || !user.getOtp().equals(otp.trim())) {
+            return OtpStatus.INVALID_OTP;
+        }
+        if (user.getOtpExpiry() == null || LocalDateTime.now().isAfter(user.getOtpExpiry())) {
+            return OtpStatus.EXPIRED_OTP;
+        }
+        return null;
     }
 
     @Override

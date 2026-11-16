@@ -10,6 +10,9 @@ public interface UserService {
     boolean register(String username, String password, String email, String fullname, String phone);
     OtpStatus verifyOtp(String email, String otp);
     OtpStatus resendOtp(String email);
+    OtpStatus sendForgotPasswordOtp(String email);
+    OtpStatus verifyForgotPasswordOtp(String email, String otp);
+    OtpStatus resetPassword(String email, String newPassword);
     boolean checkExistEmail(String email);
     boolean checkExistUsername(String username);
     boolean checkExistPhone(String phone);

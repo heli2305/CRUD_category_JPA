@@ -3,6 +3,8 @@ package vn.iotstar.util;
 public class Constant {
     public static final String SESSION_ACCOUNT = "account";
     public static final String SESSION_PENDING_EMAIL = "pendingVerifyEmail";
+    public static final String SESSION_RESET_EMAIL = "resetPasswordEmail";
+    public static final String SESSION_RESET_VERIFIED_EMAIL = "resetPasswordVerifiedEmail";
     public static final String SESSION_SUCCESS = "successMsg";
     public static final String COOKIE_REMEMBER = "remember_user";
     public static final String DIR = "D:\\upload";
@@ -11,6 +13,9 @@ public class Constant {
         public static final String LOGIN = "/views/login.jsp";
         public static final String REGISTER = "/views/register.jsp";
         public static final String VERIFY_OTP = "/views/verify-otp.jsp";
+        public static final String FORGOT_PASSWORD = "/views/forgot-password.jsp";
+        public static final String VERIFY_FORGOT_OTP = "/views/verify-forgot-otp.jsp";
+        public static final String RESET_PASSWORD = "/views/reset-password.jsp";
         public static final String HOME = "/views/home.jsp";
         public static final String ADMIN_HOME = "/views/admin/home.jsp";
         public static final String MANAGER_HOME = "/views/manager/home.jsp";

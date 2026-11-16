@@ -25,6 +25,27 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendOtpEmail(String toEmail, String fullName, String otp) {
+        String displayName = formatDisplayName(fullName);
+        String body = "<p>Xin chào <strong>" + escapeHtml(displayName) + "</strong>,</p>"
+                + "<p>Mã OTP kích hoạt tài khoản của bạn là: "
+                + "<strong style=\"font-size:20px; color:#009ee0;\">" + escapeHtml(otp) + "</strong></p>"
+                + "<p>Mã có hiệu lực trong vòng <strong>" + OtpUtil.OTP_EXPIRY_MINUTES + " phút</strong>.</p>"
+                + "<p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>";
+        sendHtmlEmail(toEmail, "Mã OTP kích hoạt tài khoản", body);
+    }
+
+    @Override
+    public void sendResetPasswordOtpEmail(String toEmail, String fullName, String otp) {
+        String displayName = formatDisplayName(fullName);
+        String body = "<p>Xin chào <strong>" + escapeHtml(displayName) + "</strong>,</p>"
+                + "<p>Mã OTP đặt lại mật khẩu của bạn là: "
+                + "<strong style=\"font-size:20px; color:#009ee0;\">" + escapeHtml(otp) + "</strong></p>"
+                + "<p>Mã có hiệu lực trong vòng <strong>" + OtpUtil.OTP_EXPIRY_MINUTES + " phút</strong>.</p>"
+                + "<p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>";
+        sendHtmlEmail(toEmail, "Mã OTP đặt lại mật khẩu", body);
+    }
+
+    private void sendHtmlEmail(String toEmail, String subject, String htmlBody) {
         String host = resolveSetting("mail.smtp.host", "MAIL_HOST", "smtp.gmail.com");
         String port = resolveSetting("mail.smtp.port", "MAIL_PORT", "587");
         String auth = config.getProperty("mail.smtp.auth", "true");
@@ -55,20 +76,17 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Mã OTP kích hoạt tài khoản", "UTF-8");
-
-            String displayName = (fullName == null || fullName.isBlank()) ? "bạn" : fullName.trim();
-            String body = "<p>Xin chào <strong>" + escapeHtml(displayName) + "</strong>,</p>"
-                    + "<p>Mã OTP kích hoạt tài khoản của bạn là: "
-                    + "<strong style=\"font-size:20px; color:#009ee0;\">" + escapeHtml(otp) + "</strong></p>"
-                    + "<p>Mã có hiệu lực trong vòng <strong>" + OtpUtil.OTP_EXPIRY_MINUTES + " phút</strong>.</p>"
-                    + "<p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>";
-            message.setContent(body, "text/html; charset=UTF-8");
+            message.setSubject(subject, "UTF-8");
+            message.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Transport.send(message);
         } catch (MessagingException e) {
             throw new IllegalStateException("Gửi email OTP thất bại", e);
         }
+    }
+
+    private String formatDisplayName(String fullName) {
+        return (fullName == null || fullName.isBlank()) ? "bạn" : fullName.trim();
     }
 
     private Properties loadConfig() {
