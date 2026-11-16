@@ -47,7 +47,13 @@ GO
 IF NOT EXISTS (SELECT 1 FROM dbo.[User] WHERE username = 'admin')
 BEGIN
     INSERT INTO dbo.[User] (email, username, fullname, password, avatar, roleid, phone, createddate)
-    VALUES ('admin@gmail.com', 'admin', N'Admin', '123', 'avata.png', 1, '0987654321', GETDATE());
+    VALUES ('admin@gmail.com', 'admin', N'Admin', '$2a$10$PXHjIrtBimozNAd25WYr1OZzyyegP6wsGVhzhV2mTZbjkMqc1GRPa', 'avata.png', 1, '0987654321', GETDATE());
+END
+ELSE
+BEGIN
+    UPDATE dbo.[User]
+    SET password = '$2a$10$PXHjIrtBimozNAd25WYr1OZzyyegP6wsGVhzhV2mTZbjkMqc1GRPa'
+    WHERE username = 'admin' AND password = '123';
 END
 GO
 

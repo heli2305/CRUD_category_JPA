@@ -9,6 +9,7 @@ import vn.iotstar.service.EmailService;
 import vn.iotstar.service.OtpStatus;
 import vn.iotstar.service.UserService;
 import vn.iotstar.util.OtpUtil;
+import vn.iotstar.util.PasswordUtil;
 
 public class UserServiceImpl implements UserService {
 
@@ -26,11 +27,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String username, String password) {
-        if (username == null || password == null) {
+        if (username == null || username.isBlank() || password == null || password.isEmpty()) {
             return null;
         }
-        User user = this.get(username);
-        if (user != null && password.equals(user.getPassWord())) {
+        User user = this.get(username.trim());
+        if (user == null || user.getPassWord() == null) {
+            return null;
+        }
+        if (PasswordUtil.isHashed(user.getPassWord())) {
+            return PasswordUtil.verifyPassword(password, user.getPassWord()) ? user : null;
+        }
+        if (password.equals(user.getPassWord())) {
+            user.setPassWord(PasswordUtil.hashPassword(password));
+            userDao.update(user);
             return user;
         }
         return null;
@@ -48,16 +57,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void insert(User user) {
+        if (user != null && user.getPassWord() != null && !user.getPassWord().isEmpty()
+                && !PasswordUtil.isHashed(user.getPassWord())) {
+            user.setPassWord(PasswordUtil.hashPassword(user.getPassWord()));
+        }
         userDao.insert(user);
     }
 
     @Override
     public boolean register(String username, String password, String email, String fullname, String phone) {
-        if (userDao.checkExistUsername(username) || userDao.checkExistEmail(email)) {
+        if (password == null || password.isEmpty()
+                || userDao.checkExistUsername(username)
+                || userDao.checkExistEmail(email)) {
             return false;
         }
         java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
-        User user = new User(email, username, fullname, password, null, 5, phone, date);
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        User user = new User(email, username, fullname, hashedPassword, null, 5, phone, date);
         String otp = OtpUtil.generateOtp();
         user.setStatus(0);
         user.setOtp(otp);

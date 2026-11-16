@@ -32,11 +32,20 @@ public class LogoutController extends HttpServlet {
                     cookie.setValue("");
                     cookie.setMaxAge(0);
                     cookie.setPath(cookiePath);
+                    cookie.setHttpOnly(true);
                     resp.addCookie(cookie);
                 }
             }
         }
 
+        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        resp.setHeader("Pragma", "no-cache");
         resp.sendRedirect(req.getContextPath() + "/login");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        doGet(req, resp);
     }
 }
