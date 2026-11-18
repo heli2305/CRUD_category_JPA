@@ -22,5 +22,10 @@ public class Constant {
         public static final String CATEGORY_LIST = "/views/admin/category-list.jsp";
         public static final String CATEGORY_ADD = "/views/admin/category-add.jsp";
         public static final String CATEGORY_EDIT = "/views/admin/category-edit.jsp";
+        public static final String VIDEO_LIST = "/views/video-list.jsp";
+        public static final String VIDEO_FORM = "/views/video-form.jsp";
+        public static final String VIDEO_DETAIL = "/views/video-detail.jsp";
+        public static final String ADMIN_VIDEO_LIST = "/views/admin/video-list.jsp";
+        public static final String ADMIN_VIDEO_FORM = "/views/admin/video-form.jsp";
     }
 }

@@ -77,9 +77,39 @@ BEGIN
         Poster NVARCHAR(500) NULL,
         Title NVARCHAR(500) NULL,
         Views INT NOT NULL DEFAULT 0,
+        VideoUrl NVARCHAR(500) NULL,
+        CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
         CategoryId INT NULL,
+        UserId INT NULL,
         CONSTRAINT FK_Videos_Categories FOREIGN KEY (CategoryId)
-            REFERENCES dbo.categories(CategoryId)
+            REFERENCES dbo.categories(CategoryId),
+        CONSTRAINT FK_Videos_Users FOREIGN KEY (UserId)
+            REFERENCES dbo.[User](id)
     );
+END
+GO
+
+IF COL_LENGTH('dbo.Videos', 'VideoUrl') IS NULL
+BEGIN
+    ALTER TABLE dbo.Videos ADD VideoUrl NVARCHAR(500) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Videos', 'CreatedDate') IS NULL
+BEGIN
+    ALTER TABLE dbo.Videos ADD CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE();
+END
+GO
+
+IF COL_LENGTH('dbo.Videos', 'UserId') IS NULL
+BEGIN
+    ALTER TABLE dbo.Videos ADD UserId INT NULL;
+END
+GO
+
+IF OBJECT_ID('FK_Videos_Users', 'F') IS NULL
+BEGIN
+    ALTER TABLE dbo.Videos ADD CONSTRAINT FK_Videos_Users FOREIGN KEY (UserId)
+        REFERENCES dbo.[User](id);
 END
 GO

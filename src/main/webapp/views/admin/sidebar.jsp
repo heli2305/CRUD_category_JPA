@@ -103,7 +103,8 @@
   .sidebar-menu > li.active-dashboard > a {
     background: #e74c3c;
   }
-  .sidebar-menu > li.active-category > a {
+  .sidebar-menu > li.active-category > a,
+  .sidebar-menu > li.active-video > a {
     background: #1a1a1a;
   }
   .sidebar-menu .submenu {
@@ -172,6 +173,22 @@
         <li><a href="<c:url value='/admin/category/add'/>">— Thêm danh mục mới</a></li>
         <li><a href="<c:url value='/admin/categories'/>">— Danh sách danh mục</a></li>
       </ul>
+    </li>
+    <li class="${param.active == 'video' ? 'active-video' : ''}">
+      <a href="<c:url value='/admin/videos'/>">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+        <span>Quản lý Video</span>
+      </a>
+      <ul class="submenu">
+        <li><a href="<c:url value='/admin/video/add'/>">— Thêm video mới</a></li>
+        <li><a href="<c:url value='/admin/videos'/>">— Danh sách video</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="<c:url value='/home'/>">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Trang chủ Video</span>
+      </a>
     </li>
     <li>
       <a href="#">
