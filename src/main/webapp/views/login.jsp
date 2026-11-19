@@ -37,8 +37,8 @@
     </c:if>
 
     <form action="${pageContext.request.contextPath}/login" method="post">
-      <input type="text" name="username" placeholder="Tài khoản">
-      <input type="password" name="password" placeholder="Mật khẩu">
+      <input type="text" name="username" placeholder="Tài khoản" required>
+      <input type="password" name="password" placeholder="Mật khẩu" required>
       <div class="remember" style="display:flex; justify-content:space-between; align-items:center;">
         <label><input type="checkbox" name="remember"> Nhớ tôi</label>
         <a href="${pageContext.request.contextPath}/forgot-password">Quên mật khẩu?</a>

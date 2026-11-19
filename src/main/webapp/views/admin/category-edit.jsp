@@ -19,21 +19,21 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/admin/sidebar.jsp">
-    <jsp:param name="active" value="category"/>
-  </jsp:include>
   <div class="admin-container">
     <div class="admin-main">
       <h1 class="page-title">Cập nhật danh mục</h1>
       <p class="page-subtitle">Chỉnh sửa thông tin danh mục</p>
 
       <div class="form-box">
+        <c:if test="${not empty alert}">
+          <div class="alert alert-danger"><c:out value="${alert}"/></div>
+        </c:if>
         <form action="<c:url value='/admin/category/update'/>" method="post" enctype="multipart/form-data">
           <input type="text" name="categoryid" value="${cate.categoryid}" hidden="hidden">
 
           <div class="form-group">
             <label for="categoryname">Category name:</label>
-            <input type="text" id="categoryname" name="categoryname" value="<c:out value='${cate.categoryname}'/>" required>
+            <input type="text" id="categoryname" name="categoryname" value="<c:out value='${cate.categoryname}'/>" maxlength="50" required>
           </div>
           <div class="form-group">
             <label for="images">Link images:</label>

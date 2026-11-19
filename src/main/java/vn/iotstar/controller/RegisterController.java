@@ -61,6 +61,16 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
+        if (password.length() < 6) {
+            forwardWithAlert(req, resp, "Mật khẩu phải có ít nhất 6 ký tự!");
+            return;
+        }
+
+        if (!phone.isEmpty() && !phone.matches("^[0-9]{9,11}$")) {
+            forwardWithAlert(req, resp, "Số điện thoại phải gồm 9-11 chữ số!");
+            return;
+        }
+
         if (service.checkExistEmail(email)) {
             forwardWithAlert(req, resp, "Email đã tồn tại!");
             return;

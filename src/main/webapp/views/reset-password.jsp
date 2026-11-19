@@ -31,8 +31,8 @@
     </c:if>
 
     <form action="${pageContext.request.contextPath}/reset-password" method="post">
-      <input type="password" name="newPassword" placeholder="Mật khẩu mới" required>
-      <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu mới" required>
+      <input type="password" name="newPassword" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" minlength="6" required>
+      <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu mới" minlength="6" required>
       <button type="submit">Đặt lại mật khẩu</button>
     </form>
 

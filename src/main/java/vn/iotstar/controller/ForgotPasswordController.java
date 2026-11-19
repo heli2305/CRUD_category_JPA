@@ -182,6 +182,11 @@ public class ForgotPasswordController extends HttpServlet {
                     "Vui lòng nhập đầy đủ mật khẩu mới và xác nhận mật khẩu!");
             return;
         }
+        if (newPassword.length() < 6) {
+            forwardWithAlert(req, resp, Constant.Path.RESET_PASSWORD, verifiedEmail,
+                    "Mật khẩu mới phải có ít nhất 6 ký tự!");
+            return;
+        }
         if (!newPassword.equals(confirmPassword)) {
             forwardWithAlert(req, resp, Constant.Path.RESET_PASSWORD, verifiedEmail,
                     "Mật khẩu xác nhận không khớp!");
