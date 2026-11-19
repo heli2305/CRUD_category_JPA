@@ -36,9 +36,6 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/admin/sidebar.jsp">
-    <jsp:param name="active" value="category"/>
-  </jsp:include>
   <div class="admin-container">
     <div class="admin-main">
       <h1 class="page-title">Quản lý danh mục</h1>

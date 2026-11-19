@@ -53,7 +53,6 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/topbar.jsp"/>
   <div class="container">
     <div class="box">
       <div class="header-row">

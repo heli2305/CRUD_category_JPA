@@ -22,9 +22,6 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/admin/sidebar.jsp">
-    <jsp:param name="active" value="dashboard"/>
-  </jsp:include>
   <div class="admin-container">
     <div class="admin-main">
       <h1 class="page-title">Dashboard</h1>

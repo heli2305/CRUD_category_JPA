@@ -12,7 +12,6 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/topbar.jsp"/>
   <div class="container">
     <div class="form-box">
       <h2>${mode == 'edit' ? 'Cập nhật Video' : 'Đăng tải Video mới'}</h2>

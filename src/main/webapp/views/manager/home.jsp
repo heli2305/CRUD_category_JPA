@@ -14,7 +14,6 @@
 </style>
 </head>
 <body>
-  <jsp:include page="/views/topbar.jsp"/>
   <div class="box">
     <h2>Trang Quản Lý (Manager)</h2>
     <p>Tài khoản: <strong><c:out value="${sessionScope.account.userName}"/></strong></p>

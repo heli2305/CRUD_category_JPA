@@ -78,5 +78,11 @@
       <version>5.10.3</version>
       <scope>test</scope>
     </dependency>
+    <!-- Layout Master -->
+ 	<dependency>
+        <groupId>org.sitemesh</groupId>
+        <artifactId>sitemesh</artifactId>
+        <version>3.2.1</version>
+    </dependency>
   </dependencies>
 </project>
